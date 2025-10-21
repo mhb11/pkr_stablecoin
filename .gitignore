@@ -30,3 +30,6 @@ htmlcov/
 
 # Docker artifacts (if you add them later)
 *.env
+
+# machine-specific artifacts
+cookies.txt
