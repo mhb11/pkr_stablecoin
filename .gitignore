@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+*.pyo
+
+# Virtualenv
+.venv/
+venv/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Django/Project
+db.sqlite3
+*.log
+staticfiles/
+media/
+
+# IDEs
+.vscode/
+.idea/
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Docker artifacts (if you add them later)
+*.env
