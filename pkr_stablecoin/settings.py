@@ -9,13 +9,19 @@ This project runs a minimal, happy-path flow:
 Security, auth, retries, and idempotency are intentionally omitted for clarity.
 """
 
+import os
 from pathlib import Path
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = "dev-key-not-for-prod"
-DEBUG = True
-ALLOWED_HOSTS = ["*"]
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-only-insecure-key")
+DEBUG = os.getenv("DEBUG", "1") in ("1", "true", "True", "yes")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if os.getenv("CSRF_TRUSTED_ORIGINS") else []
+
+def env_bool(name, default=""):
+    v = os.getenv(name, default)
+    return v.lower() in ("1", "true", "yes", "on")
 
 
 INSTALLED_APPS = [
@@ -64,12 +70,26 @@ TEMPLATES = [
 WSGI_APPLICATION = "pkr_stablecoin.wsgi.application"
 
 
-DATABASES = {
-	"default": {
-		"ENGINE": "django.db.backends.sqlite3",
-		"NAME": BASE_DIR / "db.sqlite3",
-	}
-}
+DB_ENGINE = os.getenv("DB_ENGINE", "sqlite")
+if DB_ENGINE == "postgres":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("POSTGRES_DB", "pkr_demo"),
+            "USER": os.getenv("POSTGRES_USER", "pkr_demo"),
+            "PASSWORD": os.getenv("POSTGRES_PASSWORD", "pkr_demo"),
+            "HOST": os.getenv("POSTGRES_HOST", "localhost"),
+            "PORT": os.getenv("POSTGRES_PORT", "5432"),
+        }
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
+
 
 
 AUTH_PASSWORD_VALIDATORS = []
