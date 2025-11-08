@@ -77,7 +77,7 @@ DEBUG=1
 DJANGO_SECRET_KEY=dev-insecure-please-change
 
 # Demo user
-DEMO_USER_EMAIL=hassan@bitcoinl2labs.com
+DEMO_USER_EMAIL=name@example.com
 
 # Bank webhook security
 BANK_WEBHOOK_SECRET=dev-secret-change-me
@@ -140,7 +140,7 @@ curl -X POST http://localhost:8000/api/demo/seed \
 **2) Simulate a bank webhook (credit, HMAC-signed)**
 
 ```bash
-DEMO_EMAIL=hassan@bitcoinl2labs.com
+DEMO_EMAIL=name@example.com
 BODY='{"provider_tx_id":"bank-001","direction":"credit","amount_pkr":"20000.00","status":"settled","metadata":{"user_email":"'"$DEMO_EMAIL"'"}}'
 SIG=$(printf %s "$BODY" | openssl dgst -sha256 -hmac "dev-secret-change-me" -hex | awk '{print $2}')
 
@@ -167,7 +167,7 @@ You should see **minted units** reflect 20,000 PKR → `20,000,000,000` units, a
 We simulate **Stacks Chainhook** delivering a burn event payload. The webhook extracts events, records an `OnchainEvent`, and immediately creates a `PayoutJob` (wallet **debit**).
 
 ```bash
-DEMO_EMAIL=hassan@bitcoinl2labs.com
+DEMO_EMAIL=name@example.com
 curl -X POST http://localhost:8000/api/webhooks/stacks \
   -H "Content-Type: application/json" \
   -d '{"events":[{"type":"burn","txid":"0xdeadbeef","event_index":0,"user_address":"'"$DEMO_EMAIL"'","amount_units":3000000000,"asset":"SP...::pkr"}]}'
