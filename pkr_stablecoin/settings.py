@@ -11,6 +11,7 @@ Security, auth, retries, and idempotency are intentionally omitted for clarity.
 
 import os
 from pathlib import Path
+from decimal import Decimal
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,6 +23,22 @@ CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if os.ge
 def env_bool(name, default=""):
     v = os.getenv(name, default)
     return v.lower() in ("1", "true", "yes", "on")
+
+#######################
+# HMAC secret for the bank webhook (set in env)
+BANK_WEBHOOK_SECRET = os.getenv("BANK_WEBHOOK_SECRET", "dev-secret-change-me")
+
+# Optional IP allowlist for bank webhook (CIDRs). Empty => allow all (dev).
+BANK_WEBHOOK_IP_ALLOWLIST = [
+    # "203.0.113.0/24",
+    # "198.51.100.10/32",
+]
+
+# Optional ceilings
+# from decimal import Decimal
+MAX_SINGLE_MINT_PKR = Decimal("5000000.00")
+MAX_SINGLE_PAYOUT_PKR = Decimal("5000000.00")
+#######################
 
 
 INSTALLED_APPS = [
