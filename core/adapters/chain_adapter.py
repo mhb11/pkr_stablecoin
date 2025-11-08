@@ -9,29 +9,30 @@ from chain_stub.models import ChainStubBalance
 
 class ChainAdapter:
 	"""
-	Minimal mint/burn/balance calls returning confirmed receipts
+	Minimal mint/burn/balance calls returning confirmed receipts.
+	Accepts optional idempotency_key so the service layer doesn't change later.
 	"""
 	@staticmethod
-	def mint(user_id, amount_units: int):
+	def mint(user_id, amount_units: int, idempotency_key: str | None = None):
 		"""
-		Simulate a confirmed on-chain mint by incrementing the per-user balance
+		Simulate a confirmed on-chain mint by incrementing the per-user balance.
+		idempotency_key is ignored in the stub but kept for future Stacks integration.
 		"""
 		bal, _ = ChainStubBalance.objects.get_or_create(user_id=user_id, defaults={"balance_units": 0})
 		bal.balance_units += int(amount_units)
 		bal.save(update_fields=["balance_units"])
 		return {"tx_hash": "0xMINT", "status": "confirmed"}
 
-
 	@staticmethod
-	def burn(user_id, amount_units: int):
+	def burn(user_id, amount_units: int, idempotency_key: str | None = None):
 		"""
 		Simulate a confirmed burn by decrementing the per-user balance.
+		idempotency_key is ignored in the stub but kept for future Stacks integration.
 		"""
 		bal, _ = ChainStubBalance.objects.get_or_create(user_id=user_id, defaults={"balance_units": 0})
 		bal.balance_units -= int(amount_units)
 		bal.save(update_fields=["balance_units"])
 		return {"tx_hash": "0xBURN", "status": "confirmed"}
-
 
 	@staticmethod
 	def get_balance(user_id) -> int:
